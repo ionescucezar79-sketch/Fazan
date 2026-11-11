@@ -3,7 +3,7 @@
     "relation": ["delegate_permission/common.handle_all_urls"],
     "target": {
       "namespace": "android_app",
-      "package_name": "ro.cezar.fazan",
+      "package_name": "yo.da",
       "sha256_cert_fingerprints": [
         "INLOCUIESTE_CU_AMPRENTA_SHA256_DIN_PLAY_CONSOLE"
       ]
