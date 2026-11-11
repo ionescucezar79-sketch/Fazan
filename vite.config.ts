@@ -15,7 +15,11 @@ export default defineConfig({
         short_name: 'Fazan',
         description: 'Jocul de cuvinte Fazan, contra botului.',
         lang: 'ro',
+        id: '/',
         start_url: '.',
+        scope: '.',
+        orientation: 'portrait',
+        categories: ['games', 'education', 'word'],
         display: 'standalone',
         background_color: "#1c1511",
         theme_color: "#1c1511",
@@ -30,6 +34,7 @@ export default defineConfig({
         globPatterns: ['**/*.{js,css,html,svg,png,woff2}'],
         globIgnores: ['dict/**', 'def/**'],
         navigateFallback: 'index.html',
+        navigateFallbackDenylist: [/^\/\.well-known\//, /confidentialitate\.html$/],
         runtimeCaching: [
           {
             // definitiile se salveaza doar cand le ceri
