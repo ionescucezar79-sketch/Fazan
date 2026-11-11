@@ -5,7 +5,7 @@ Actualizările jocului ajung la jucători prin `firebase deploy`, fără o versi
 Un AAB nou trimiți doar când schimbi iconița, numele sau pachetul.
 
 ## 0. Ce trebuie hotărât o singură dată
-- **Numele pachetului:** acum e `yo.da`, în `public/.well-known/assetlinks.json`. După
+- **Numele pachetului:** acum e `yo.da.fazan`, în `public/.well-known/assetlinks.json`. După
   prima publicare nu se mai poate schimba. Dacă vrei alt nume, schimbă-l acum, peste tot.
 - **Adresa de contact:** înlocuiește `ADRESA_DE_CONTACT` în `public/confidentialitate.html`.
 
@@ -27,7 +27,7 @@ Verifică:
 
 ## 2. Generarea pachetului Android
 Cea mai simplă variantă: https://www.pwabuilder.com → introduci URL-ul `web.app` → Package for stores
-→ Android → Package ID `yo.da`. Primești:
+→ Android → Package ID `yo.da.fazan`. Primești:
 - `app-release-bundle.aab` (îl urci în Play)
 - `signing.keystore` + parolele. **Păstrează-le în siguranță, în afara repo-ului.**
 - `assetlinks.json` cu amprenta cheii tale
