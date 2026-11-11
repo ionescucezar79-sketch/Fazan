@@ -1,0 +1,512 @@
+/* Fazan — uliță de sat, seara. Partida se joacă pe o scoarță țesută, ca pe o masă de poker. */
+:root {
+  --noapte: #1c1511;
+  --lemn: #2e221b;
+  --panou: #2a201a;
+  --text: #efe6d8;
+  --estompat: #b3a58f;
+  --ocru: #d9a441;
+  --ocru-text: #231a12;
+  --hartie: #f4ecdd;
+  --cerneala: #231a15;
+  --arama: #a4461a;
+  --obraz: #c8372b;
+  --obraz-deschis: #f0806f;
+  --linie: rgba(239, 230, 216, 0.16);
+
+  --serif: 'Alegreya', 'Georgia', 'Times New Roman', serif;
+  --sans: 'Alegreya Sans', 'Segoe UI', system-ui, sans-serif;
+
+  color-scheme: dark;
+  box-sizing: border-box;
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+*, *::before, *::after { box-sizing: inherit; }
+html, body, #root { height: 100%; margin: 0; }
+body {
+  background: var(--noapte);
+  color: var(--text);
+  font: 400 1.0625rem/1.5 var(--sans);
+  -webkit-font-smoothing: antialiased;
+}
+.app { max-width: 34rem; height: 100%; margin: 0 auto; }
+.vizual-ascuns { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+:focus-visible { outline: 3px solid var(--ocru); outline-offset: 2px; }
+
+/* ---------- butoane ---------- */
+.buton {
+  font: 700 1.0625rem/1 var(--sans);
+  border: 0;
+  border-radius: 999px;
+  padding: 0.9rem 1.3rem;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+.buton:disabled { opacity: 0.4; cursor: default; }
+.buton--principal { background: var(--ocru); color: var(--ocru-text); }
+.buton--secundar { background: transparent; color: var(--text); box-shadow: inset 0 0 0 1.5px var(--linie); }
+.buton--text { background: none; color: var(--estompat); font-weight: 500; padding: 0.6rem 0.25rem; text-decoration: underline; text-underline-offset: 3px; }
+
+input[type='text'] {
+  font: inherit; color: var(--text); background: var(--lemn);
+  border: 1.5px solid var(--linie); border-radius: 8px; padding: 0.75rem 0.9rem; width: 100%;
+}
+
+/* ---------- scoarta (covorul) ---------- */
+.covor {
+  --camp-covor: #7a1e1b;
+  --fir: #efe6d8;
+  --motiv: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%2224%22%20height%3D%2224%22%3E%3Crect%20width%3D%2224%22%20height%3D%2224%22%20fill%3D%22%231c1210%22/%3E%3Cpath%20d%3D%22M12%202%2022%2012%2012%2022%202%2012Z%22%20fill%3D%22none%22%20stroke%3D%22%23d9a441%22%20stroke-width%3D%222%22/%3E%3Cpath%20d%3D%22M12%208%2016%2012%2012%2016%208%2012Z%22%20fill%3D%22%23efe6d8%22/%3E%3Cpath%20d%3D%22M0%200h2v2H0zM22%200h2v2h-2zM0%2022h2v2H0zM22%2022h2v2h-2z%22%20fill%3D%22%23efe6d8%22/%3E%3C/svg%3E");
+  position: relative;
+  padding: 14px;
+  background: var(--motiv) center / 22px 22px;
+  border-radius: 4px;
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(0, 0, 0, 0.4);
+}
+.covor::before, .covor::after {
+  /* ciucurii */
+  content: '';
+  position: absolute; left: 6px; right: 6px; height: 10px;
+  background: repeating-linear-gradient(90deg, var(--fir) 0 2px, transparent 2px 5px);
+  opacity: 0.85;
+}
+.covor::before { top: -10px; }
+.covor::after { bottom: -10px; }
+.covor__camp {
+  position: relative;
+  height: 100%;
+  background:
+    radial-gradient(ellipse at center, rgba(255, 255, 255, 0.06), transparent 65%),
+    var(--camp-covor);
+  box-shadow: inset 0 0 0 2px var(--fir), inset 0 0 0 6px var(--camp-covor), inset 0 0 0 7px rgba(239, 230, 216, 0.35);
+}
+.covor__camp::before {
+  /* romb central, ca pe scoarta olteneasca */
+  content: '';
+  position: absolute; left: 50%; top: 50%;
+  width: 46%; aspect-ratio: 1;
+  transform: translate(-50%, -50%) rotate(45deg);
+  border: 2px solid rgba(239, 230, 216, 0.22);
+  box-shadow: inset 0 0 0 10px rgba(217, 164, 65, 0.1), inset 0 0 0 12px rgba(239, 230, 216, 0.14);
+  pointer-events: none;
+}
+.covor--banca { --camp-covor: #1f3f73; --fir: #e9e1cf; --motiv: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%2224%22%20height%3D%2224%22%3E%3Crect%20width%3D%2224%22%20height%3D%2224%22%20fill%3D%22%23132a4f%22/%3E%3Cpath%20d%3D%22M12%202%2022%2012%2012%2022%202%2012Z%22%20fill%3D%22none%22%20stroke%3D%22%23e9e1cf%22%20stroke-width%3D%222%22/%3E%3Cpath%20d%3D%22M12%208%2016%2012%2012%2016%208%2012Z%22%20fill%3D%22%23d9a441%22/%3E%3Cpath%20d%3D%22M0%200h2v2H0zM22%200h2v2h-2zM0%2022h2v2H0zM22%2022h2v2h-2z%22%20fill%3D%22%23d9a441%22/%3E%3C/svg%3E"); }
+.covor--nuc { --camp-covor: #2e5a3f; --fir: #e8dcc2; --motiv: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%2224%22%20height%3D%2224%22%3E%3Crect%20width%3D%2224%22%20height%3D%2224%22%20fill%3D%22%231f2a1c%22/%3E%3Cpath%20d%3D%22M12%202%2022%2012%2012%2022%202%2012Z%22%20fill%3D%22none%22%20stroke%3D%22%23d9a441%22%20stroke-width%3D%222%22/%3E%3Cpath%20d%3D%22M12%208%2016%2012%2012%2016%208%2012Z%22%20fill%3D%22%23b8352c%22/%3E%3Cpath%20d%3D%22M0%200h2v2H0zM22%200h2v2h-2zM0%2022h2v2H0zM22%2022h2v2h-2z%22%20fill%3D%22%23b8352c%22/%3E%3C/svg%3E"); }
+.covor--mic { padding: 6px; width: 100%; height: 100%; box-shadow: 0 6px 14px rgba(0,0,0,.5); background-size: 12px 12px; }
+.covor--mic::before, .covor--mic::after { height: 5px; background: repeating-linear-gradient(90deg, var(--fir) 0 1px, transparent 1px 3px); }
+.covor--mic::before { top: -5px; }
+.covor--mic::after { bottom: -5px; }
+.covor--mic .covor__camp::before { border-width: 1px; box-shadow: none; }
+
+/* ---------- ulita (lobby) ---------- */
+.ulita { padding: 2.25rem 1.125rem 1.5rem; display: flex; flex-direction: column; min-height: 100%; }
+.ulita__titlu { margin: 0; font: 700 3.5rem/1 var(--serif); color: var(--ocru); letter-spacing: 0.01em; }
+.ulita__regula { margin: 0.75rem 0 1.25rem; max-width: 30rem; font: 500 1.125rem/1.55 var(--serif); color: var(--text); }
+.ulita__nume { display: flex; flex-direction: column; gap: 0.4rem; font-weight: 700; max-width: 18rem; }
+.ulita__sectiune { margin: 2rem 0 0.75rem; font: 700 1.5rem/1.2 var(--serif); }
+.locuri { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.75rem; }
+.loc {
+  display: grid;
+  grid-template-columns: 4.5rem 1fr;
+  grid-template-areas: 'mostra text' 'mostra buton';
+  gap: 0.35rem 1rem;
+  padding: 1rem;
+  border-radius: 10px;
+  background: var(--panou);
+  box-shadow: inset 0 0 0 1px var(--linie);
+}
+.loc__mostra { grid-area: mostra; padding: 6px 0; height: 6.5rem; }
+.loc__text { grid-area: text; }
+.loc__buton { grid-area: buton; justify-self: start; padding: 0.7rem 1.4rem; }
+.loc__nume { margin: 0; font: 700 1.3rem/1.2 var(--serif); }
+.loc__descriere { margin: 0.2rem 0 0; }
+.loc__detalii { margin: 0.2rem 0 0; color: var(--estompat); font-size: 0.9375rem; }
+.loc__jucatori { margin: 0.5rem 0 0.3rem; display: flex; align-items: center; gap: 0.6rem; color: var(--estompat); font-size: 0.9375rem; }
+.scaune { display: inline-flex; gap: 3px; }
+.scaun { width: 1.35rem; height: 1.35rem; border-radius: 50%; display: grid; place-items: center; font: 700 0.75rem/1 var(--sans); }
+.scaun--ocupat { background: var(--estompat); color: var(--noapte); }
+.scaun--liber { box-shadow: inset 0 0 0 1.5px var(--ocru); }
+.ulita__subsol { margin-top: auto; padding-top: 2rem; color: var(--estompat); font-size: 0.9375rem; }
+.ulita__subsol p { margin: 0 0 0.5rem; }
+.ulita__subsol progress { display: block; width: 100%; margin-top: 0.4rem; accent-color: var(--ocru); }
+.eroare { color: var(--obraz-deschis); }
+
+/* ---------- jetoanele F-A-Z-A-N ---------- */
+.litere { display: inline-flex; gap: 2px; }
+.litera {
+  display: grid; place-items: center;
+  width: 1.05rem; height: 1.05rem;
+  border-radius: 50%;
+  font: 700 0.625rem/1 var(--sans);
+  color: rgba(239, 230, 216, 0.35);
+  box-shadow: inset 0 0 0 1px rgba(239, 230, 216, 0.3);
+}
+.litera--primita {
+  color: #fff; background: var(--obraz);
+  box-shadow: inset 0 0 0 1.5px rgba(255, 255, 255, 0.55), 0 1px 2px rgba(0, 0, 0, 0.5);
+  animation: jeton 380ms cubic-bezier(0.2, 0.8, 0.3, 1.3);
+}
+@keyframes jeton { from { transform: translateY(-14px) scale(1.6); opacity: 0; } }
+
+/* ---------- masa ---------- */
+.joc { display: flex; flex-direction: column; height: 100%; padding: 0 0.75rem; }
+.joc--covor { background: radial-gradient(ellipse at 50% 45%, #3a2a20 0%, var(--noapte) 70%); }
+.joc--banca {
+  background:
+    radial-gradient(ellipse at 50% 45%, rgba(255, 214, 150, 0.12), transparent 65%),
+    repeating-linear-gradient(90deg, #3d2c20 0 58px, #2b1f17 58px 61px);
+}
+.joc--nuc {
+  background:
+    radial-gradient(circle at 20% 15%, rgba(0,0,0,.35) 0 12%, transparent 30%),
+    radial-gradient(circle at 85% 30%, rgba(0,0,0,.3) 0 10%, transparent 26%),
+    radial-gradient(ellipse at 50% 50%, #3a4a2c 0%, #1b2216 75%);
+}
+.app:has(.joc) { max-width: none; }
+.joc > * { width: 100%; max-width: 34rem; margin-left: auto; margin-right: auto; }
+.joc__bara { display: flex; justify-content: space-between; align-items: center; padding: 0.35rem 0; }
+.joc__loc { font: 700 1.05rem/1 var(--serif); color: var(--estompat); }
+
+.masa {
+  position: relative;
+  flex: 1;
+  min-height: 18rem;
+  container-type: size;
+}
+.masa > .covor { position: absolute; inset: 4.6rem 2.6rem 5.2rem; }
+
+.pachet {
+  position: absolute; inset: 0;
+  display: grid; place-items: center;
+}
+.pachet--gol { place-content: center; text-align: center; gap: 0.4rem; padding: 1rem; }
+.pachet__runda { margin: 0; font: 700 1.6rem/1.1 var(--serif); color: var(--fir); }
+.pachet__indemn { margin: 0; color: var(--fir); opacity: 0.85; max-width: 14rem; }
+.pachet__stare { margin: 0.3rem 0 0; color: var(--fir); opacity: 0.7; font-size: 0.9375rem; }
+
+.carte {
+  grid-area: 1 / 1;
+  position: relative;
+  width: min(15rem, 82%);
+  min-height: 7.5rem;
+  display: grid; place-items: center;
+  padding: 1rem 0.75rem 1.6rem;
+  background: var(--hartie);
+  color: var(--cerneala);
+  border-radius: 10px;
+  box-shadow: 0 1px 0 rgba(255,255,255,.6) inset, 0 8px 18px rgba(0, 0, 0, 0.45);
+  transform: translateY(calc(var(--adancime) * -0.9rem)) rotate(var(--rot)) scale(calc(1 - var(--adancime) * 0.06));
+  filter: brightness(calc(1 - var(--adancime) * 0.12));
+  transition: transform 320ms ease, filter 320ms ease;
+}
+.carte::before {
+  /* chenar subtire, ca la o carte de joc */
+  content: ''; position: absolute; inset: 6px; border-radius: 6px;
+  border: 1px solid rgba(35, 26, 21, 0.18);
+  pointer-events: none;
+}
+.carte .cuvant { font: 700 var(--marime) / 1.05 var(--serif); overflow-wrap: anywhere; text-align: center; }
+.carte:not(.carte--sus) .cuvant { visibility: hidden; }
+.carte .veriga { color: var(--arama); text-decoration: underline; text-decoration-thickness: 0.07em; text-underline-offset: 0.12em; }
+.carte__autor { position: absolute; bottom: 0.55rem; font-size: 0.8125rem; color: rgba(35, 26, 21, 0.6); }
+.carte--sus { animation: imparte 420ms cubic-bezier(0.2, 0.75, 0.25, 1); }
+@keyframes imparte {
+  from { transform: translate(var(--dx), var(--dy)) rotate(-18deg) scale(0.35); opacity: 0.2; }
+}
+
+/* scaunele */
+.scaun-joc {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  display: flex; flex-direction: column; align-items: center; gap: 0.25rem;
+  width: 6.2rem;
+  text-align: center;
+  z-index: 2;
+}
+.scaun-joc__avatar {
+  --p: 1;
+  position: relative;
+  width: 3.4rem; height: 3.4rem;
+  border-radius: 50%;
+  display: grid; place-items: center;
+  font: 700 1.4rem/1 var(--serif);
+  color: var(--text);
+  background: #4a382c;
+  box-shadow: 0 0 0 3px var(--noapte), 0 4px 10px rgba(0,0,0,.5);
+}
+.scaun-joc--eu .scaun-joc__avatar { background: #5b4330; }
+.scaun-joc--activ .scaun-joc__avatar::before {
+  /* inelul de timp, ca la poker */
+  content: '';
+  position: absolute; inset: -6px; border-radius: 50%;
+  background: conic-gradient(var(--ocru) calc(var(--p) * 360deg), rgba(239,230,216,.15) 0);
+  -webkit-mask: radial-gradient(circle, transparent calc(50% - 4px), #000 calc(50% - 3px));
+          mask: radial-gradient(circle, transparent calc(50% - 4px), #000 calc(50% - 3px));
+}
+.scaun-joc--urgent .scaun-joc__avatar::before {
+  background: conic-gradient(var(--obraz-deschis) calc(var(--p) * 360deg), rgba(239,230,216,.15) 0);
+}
+.scaun-joc__secunde {
+  position: absolute; right: -0.55rem; bottom: -0.3rem;
+  min-width: 1.5rem; padding: 0.15rem 0.3rem;
+  border-radius: 999px;
+  background: var(--ocru); color: var(--ocru-text);
+  font: 700 0.75rem/1 var(--sans);
+  font-variant-numeric: tabular-nums;
+}
+.scaun-joc--urgent .scaun-joc__secunde { background: var(--obraz-deschis); }
+.scaun-joc__eticheta {
+  display: flex; flex-direction: column; align-items: center; gap: 0.2rem;
+  padding: 0.25rem 0.5rem 0.35rem;
+  border-radius: 8px;
+  background: rgba(20, 14, 11, 0.78);
+}
+.scaun-joc__nume { font-weight: 700; font-size: 0.875rem; line-height: 1.1; white-space: nowrap; }
+.scaun-joc__bula {
+  position: absolute; top: -0.9rem; right: 0.2rem;
+  padding: 0 0.45rem 0.35rem;
+  border-radius: 999px 999px 999px 2px;
+  background: var(--hartie); color: var(--cerneala);
+  font: 700 1.1rem/1 var(--serif);
+  animation: bula 1s ease-in-out infinite alternate;
+}
+@keyframes bula { to { transform: translateY(-3px); } }
+.scaun-joc--iesit { opacity: 0.45; }
+.scaun-joc__fazan {
+  position: absolute; top: 1.1rem;
+  transform: rotate(-12deg);
+  padding: 0.1rem 0.4rem;
+  border: 2px solid var(--obraz-deschis); color: var(--obraz-deschis);
+  border-radius: 4px;
+  font: 700 0.875rem/1 var(--serif);
+}
+
+/* mesajul "dealerului" si intrarea */
+.mesaj { margin: 0.25rem auto 0.35rem; min-height: 2.8em; text-align: center; color: var(--estompat); font-size: 0.9688rem; }
+.mesaj--eroare { color: var(--obraz-deschis); font-weight: 700; animation: tremur 280ms; }
+.mesaj--penalizare { color: var(--text); font-weight: 500; }
+@keyframes tremur { 25% { transform: translateX(-4px); } 75% { transform: translateX(4px); } }
+
+.intrare {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 0.45rem;
+  padding: 0.6rem 0 calc(0.6rem + env(safe-area-inset-bottom, 0px));
+}
+.intrare .buton { padding: 0.85rem 1.05rem; }
+.intrare__camp {
+  display: flex; align-items: stretch;
+  background: var(--hartie);
+  color: var(--cerneala);
+  border-radius: 999px;
+  overflow: hidden;
+  min-width: 0;
+}
+.intrare__camp:focus-within { box-shadow: 0 0 0 3px var(--ocru); }
+.intrare__camp--blocat { opacity: 0.55; }
+.intrare__veriga { display: grid; place-items: center; padding: 0 0.2rem 0 0.95rem; font: 700 1.3rem/1 var(--serif); color: var(--arama); }
+.intrare__camp input {
+  flex: 1; min-width: 0;
+  border: 0; background: transparent; color: inherit;
+  padding: 0.7rem 0.9rem 0.7rem 0.1rem;
+  font: 500 1.3rem/1.2 var(--serif);
+}
+.intrare__camp input:first-child { padding-left: 1rem; }
+.intrare__camp input::placeholder { color: rgba(35, 26, 21, 0.45); }
+.intrare__camp input:focus-visible { outline: none; }
+
+/* ---------- final ---------- */
+.final {
+  position: fixed; inset: 0; z-index: 10;
+  display: grid; place-items: end center;
+  background: rgba(10, 7, 5, 0.55);
+  padding: 1rem calc(1rem) calc(1rem + env(safe-area-inset-bottom, 0px));
+}
+.final__panou {
+  width: 100%; max-width: 32rem;
+  background: var(--panou);
+  box-shadow: inset 0 0 0 1px var(--linie), 0 -10px 40px rgba(0,0,0,.4);
+  border-radius: 16px;
+  padding: 1.75rem 1.5rem 1.5rem;
+  animation: urca 300ms cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+.final__titlu { margin: 0 0 0.5rem; font: 700 2.2rem/1.1 var(--serif); color: var(--ocru); }
+.final__detaliu { margin: 0 0 1.5rem; color: var(--estompat); }
+.final__butoane { display: grid; gap: 0.6rem; }
+@keyframes urca { from { transform: translateY(40px); opacity: 0; } }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}
+
+/* ---------- recompense ---------- */
+.nuca { width: 1.05em; height: 1.05em; vertical-align: -0.16em; flex: none; }
+
+.punga {
+  margin-top: 1.5rem;
+  padding: 1rem;
+  border-radius: 10px;
+  background: var(--panou);
+  box-shadow: inset 0 0 0 1px var(--linie);
+}
+.punga__rand { display: flex; justify-content: space-between; align-items: center; gap: 0.75rem; flex-wrap: wrap; }
+.punga__nuci { font: 700 1.6rem/1 var(--serif); color: var(--ocru); display: inline-flex; align-items: center; gap: 0.4rem; }
+.punga__lada { padding: 0.55rem 0.9rem; font-size: 0.9375rem; }
+.punga__rang { margin: 0.75rem 0 0.45rem; color: var(--estompat); font-size: 0.9375rem; }
+.punga__rang strong { color: var(--text); }
+.punga__bara { height: 6px; border-radius: 3px; background: rgba(239, 230, 216, 0.12); overflow: hidden; }
+.punga__bara span { display: block; height: 100%; background: var(--ocru); transform-origin: left; transition: transform 600ms ease; }
+.punga__zile { margin: 0.6rem 0 0; font-size: 0.9375rem; color: var(--estompat); }
+
+.loc--inchis .loc__mostra { filter: grayscale(0.85) brightness(0.6); }
+.loc--inchis .loc__nume, .loc--inchis .loc__descriere { color: var(--estompat); }
+.loc__lacat { grid-area: buton; margin: 0.2rem 0 0; font-size: 0.9375rem; color: var(--ocru); }
+
+.joc__bara { gap: 0.75rem; }
+.joc__loc { flex: 1; text-align: right; }
+.joc__nuci {
+  display: inline-flex; align-items: center; gap: 0.3rem;
+  padding: 0.3rem 0.65rem;
+  border-radius: 999px;
+  background: rgba(20, 14, 11, 0.7);
+  font: 700 1rem/1 var(--sans);
+  color: var(--ocru);
+  font-variant-numeric: tabular-nums;
+}
+
+.zbor {
+  position: absolute; left: 50%; top: -0.6rem;
+  display: inline-flex; align-items: center; gap: 0.2rem;
+  padding: 0.25rem 0.6rem;
+  border-radius: 999px;
+  background: var(--ocru); color: var(--ocru-text);
+  font: 700 1rem/1 var(--sans);
+  white-space: nowrap;
+  pointer-events: none;
+  animation: zbor 1400ms ease-out forwards;
+}
+@keyframes zbor {
+  0% { transform: translate(-50%, 10px) scale(0.6); opacity: 0; }
+  15% { transform: translate(-50%, -8px) scale(1.1); opacity: 1; }
+  70% { transform: translate(-50%, -40px) scale(1); opacity: 1; }
+  100% { transform: translate(-50%, -64px); opacity: 0; }
+}
+
+.anunt-loc {
+  position: fixed; left: 0; right: 0; top: calc(0.6rem + env(safe-area-inset-top, 0px));
+  display: grid; justify-items: center;
+  padding: 0 0.75rem;
+  z-index: 20;
+  pointer-events: none;
+}
+.anunt {
+  pointer-events: auto;
+  display: flex; align-items: center; gap: 0.75rem;
+  width: 100%; max-width: 26rem;
+  padding: 0.75rem 1rem;
+  border: 0; border-radius: 12px;
+  text-align: left;
+  background: var(--hartie); color: var(--cerneala);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  font: inherit;
+  cursor: pointer;
+  animation: coboara 360ms cubic-bezier(0.2, 0.8, 0.3, 1.2);
+}
+.anunt__semn {
+  display: grid; place-items: center; flex: none;
+  width: 2.2rem; height: 2.2rem; border-radius: 50%;
+  background: var(--ocru); color: var(--ocru-text);
+  font-size: 1.1rem;
+}
+.anunt--rang .anunt__semn { background: #2f7a63; color: #fff; }
+.anunt__titlu { display: block; font: 700 1.05rem/1.2 var(--serif); }
+.anunt__text { display: block; font-size: 0.9375rem; color: rgba(35, 26, 21, 0.75); }
+@keyframes coboara { from { transform: translateY(-120%); opacity: 0; } }
+
+.lada { max-height: calc(100dvh - 2rem); overflow-y: auto; }
+.insigne { list-style: none; margin: 0 0 1.25rem; padding: 0; display: grid; gap: 0.4rem; }
+.insigna {
+  display: grid; grid-template-columns: 1.8rem 1fr auto; align-items: center; gap: 0.6rem;
+  padding: 0.55rem 0.7rem;
+  border-radius: 8px;
+  background: rgba(239, 230, 216, 0.05);
+  color: var(--estompat);
+}
+.insigna__semn { font-size: 1.1rem; text-align: center; }
+.insigna__text strong { display: block; color: var(--text); font-family: var(--serif); font-size: 1.05rem; }
+.insigna__text span { font-size: 0.875rem; }
+.insigna__nuci { font-weight: 700; font-size: 0.875rem; color: var(--ocru); }
+.insigna--are { background: rgba(217, 164, 65, 0.14); }
+.insigna--are .insigna__semn { color: var(--ocru); }
+.insigna--are .insigna__nuci { color: var(--estompat); font-weight: 500; }
+
+.socoteala { list-style: none; margin: 0.5rem 0 1rem; padding: 0; }
+.socoteala li { display: flex; justify-content: space-between; padding: 0.3rem 0; color: var(--estompat); border-bottom: 1px solid var(--linie); }
+.socoteala li span:last-child { font-variant-numeric: tabular-nums; color: var(--text); }
+.socoteala__total { border-bottom: 0 !important; padding-top: 0.6rem !important; font-weight: 700; }
+.socoteala__total span { color: var(--ocru) !important; font-size: 1.2rem; }
+.final__insigne { margin: 0 0 1rem; color: var(--ocru); font-weight: 500; }
+.final__rang { margin: 0 0 1.25rem; display: grid; gap: 0.45rem; font-size: 0.9375rem; color: var(--estompat); }
+
+/* ---------- definitii ---------- */
+.carte { padding-bottom: 2.4rem; }
+.carte__autor { bottom: 0.45rem; left: 0.9rem; }
+.carte__intreaba {
+  position: absolute; right: 0.6rem; bottom: 0.4rem;
+  border: 0; background: none; cursor: pointer;
+  font: 700 0.8125rem/1 var(--sans);
+  color: var(--arama);
+  text-decoration: underline; text-underline-offset: 3px;
+  padding: 0.3rem 0.2rem;
+}
+
+.foaie-fond {
+  position: fixed; inset: 0; z-index: 30;
+  display: grid; place-items: end center;
+  background: rgba(10, 7, 5, 0.55);
+  padding: 0.75rem 0.75rem calc(0.75rem + env(safe-area-inset-bottom, 0px));
+}
+.foaie {
+  width: 100%; max-width: 32rem;
+  max-height: calc(100dvh - 3rem); overflow-y: auto;
+  background: var(--hartie); color: var(--cerneala);
+  border-radius: 16px;
+  padding: 1.5rem 1.4rem 1.25rem;
+  box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.45);
+  animation: urca 280ms cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+.foaie__cuvant { margin: 0 0 0.6rem; font: 700 2.1rem/1.1 var(--serif); color: var(--cerneala); overflow-wrap: anywhere; }
+.foaie__text { margin: 0 0 0.75rem; font: 500 1.0625rem/1.55 var(--serif); }
+.foaie__sold { margin: 0 0 0.75rem; font-weight: 700; display: flex; align-items: center; gap: 0.35rem; }
+.foaie__atentie { margin: 0 0 0.75rem; color: var(--obraz); font-weight: 700; font-size: 0.9375rem; }
+.foaie__sens + .foaie__sens { border-top: 1px solid rgba(35, 26, 21, 0.15); padding-top: 0.75rem; }
+.foaie__forma { margin: 0 0 0.25rem; font-size: 0.9375rem; color: rgba(35, 26, 21, 0.7); }
+.foaie__categorie { margin: 0 0 0.3rem; font: italic 500 0.9375rem/1.3 var(--serif); color: var(--arama); }
+.foaie__sursa { margin: 0 0 0.75rem; font-size: 0.8125rem; color: rgba(35, 26, 21, 0.6); }
+.foaie__link { display: inline-block; margin: 0 0 1rem; color: var(--arama); font-weight: 700; }
+.foaie__butoane { display: grid; gap: 0.5rem; }
+.foaie .buton--secundar { color: var(--cerneala); box-shadow: inset 0 0 0 1.5px rgba(35, 26, 21, 0.25); }
+
+.final__cuvinte { margin: 0 0 1.1rem; }
+.final__cuvinte p { margin: 0 0 0.5rem; color: var(--estompat); font-size: 0.9375rem; }
+.final__cuvinte ul { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 0.4rem; }
+.chip {
+  border: 0; cursor: pointer;
+  padding: 0.4rem 0.75rem;
+  border-radius: 999px;
+  background: var(--hartie); color: var(--cerneala);
+  font: 500 1rem/1.1 var(--serif);
+}
+.chip--stiut { background: transparent; color: var(--estompat); box-shadow: inset 0 0 0 1.5px var(--linie); }
+
+.punga__butoane { display: flex; gap: 0.4rem; flex-wrap: wrap; }
+.caiet { list-style: none; margin: 0 0 1.25rem; padding: 0; display: grid; gap: 0.35rem; }
+.caiet details { border-radius: 8px; background: rgba(239, 230, 216, 0.05); padding: 0.55rem 0.8rem; }
+.caiet summary { cursor: pointer; display: flex; justify-content: space-between; align-items: center; gap: 0.5rem; }
+.caiet__lema { font: 700 1.1rem/1.2 var(--serif); }
+.caiet__bifa { font-size: 0.8125rem; color: var(--ocru); }
+.caiet__text { margin: 0.4rem 0; font: 500 1rem/1.5 var(--serif); color: var(--text); }
+.caiet .foaie__categorie { color: var(--ocru); margin-top: 0.4rem; }
+.caiet .foaie__sursa { color: var(--estompat); }
