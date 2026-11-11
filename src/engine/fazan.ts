@@ -41,7 +41,7 @@ export interface StareJoc {
   jucatori: Jucator[];
   randul: number; // indexul jucatorului care trebuie sa spuna un cuvant
   cuvantCurent: string | null;
-  /** Terminatia ceruta (fara diacritice). null = runda noua, orice cuvant e permis. */
+  /** Terminatia ceruta, exact cu diacritice (ex. „să”, „ța”). null = runda noua, orice cuvant e permis. */
   terminatie: string | null;
   folosite: string[]; // forme canonice, pe tot meciul
   status: 'in_desfasurare' | 'terminat';
@@ -68,7 +68,7 @@ export const MESAJE_EROARE: Record<CodEroare, string> = {
   timp_expirat: 'Timpul a expirat.',
   caractere_invalide: 'Folosește doar litere.',
   prea_scurt: 'Cuvântul e prea scurt.',
-  prefix_gresit: 'Cuvântul trebuie să înceapă cu literele cerute.',
+  prefix_gresit: 'Cuvântul trebuie să înceapă exact cu literele cerute, cu diacritice cu tot.',
   nu_exista: 'Cuvântul nu e în dicționar.',
   deja_folosit: 'Cuvântul a mai fost folosit.',
   inchidere_interzisa: 'Nu ai voie să închizi la începutul rundei.',
@@ -144,10 +144,16 @@ export function valideaza(
   const c = curata(input);
   if (!CARACTERE_VALIDE.test(c)) return { ok: false, eroare: 'caractere_invalide' };
   if (c.length < s.setari.lungimeMinima) return { ok: false, eroare: 'prea_scurt' };
-  if (s.terminatie !== null && !normalizeaza(c).startsWith(s.terminatie)) return { ok: false, eroare: 'prefix_gresit' };
+  // Prima verificare e lejera (ca sa nu respingem „sarpe” tastat fara ș); cea exacta se face pe forma din dictionar.
+  if (s.terminatie !== null && !normalizeaza(c).startsWith(normalizeaza(s.terminatie))) {
+    return { ok: false, eroare: 'prefix_gresit' };
+  }
 
-  const candidati = dict.potriviri(c);
-  if (candidati.length === 0) return { ok: false, eroare: 'nu_exista' };
+  const toti = dict.potriviri(c);
+  if (toti.length === 0) return { ok: false, eroare: 'nu_exista' };
+  const t = s.terminatie;
+  const candidati = t === null ? toti : toti.filter((x) => x.startsWith(t));
+  if (candidati.length === 0) return { ok: false, eroare: 'prefix_gresit' };
   const folosite = new Set(s.folosite);
   const cuvant = candidati.find((x) => !folosite.has(x));
   if (!cuvant) return { ok: false, eroare: 'deja_folosit' };

@@ -6,7 +6,7 @@ React 18 + Vite + Zustand, PWA. Motorul jocului e în `src/engine` (TypeScript p
 ```
 npm install
 npm run dev        # http://localhost:5173
-npm test           # 21 de teste (reguli, bot, dicționarul real)
+npm test           # 38 de teste (reguli, diacritice, bot, dicționarul real)
 npm run build      # dist/ gata pentru Firebase Hosting
 firebase deploy --only hosting
 ```
@@ -17,7 +17,7 @@ firebase deploy --only hosting
 - `src/locuri.ts` – locurile de pe „uliță” (ca mesele de poker): nume, suprafață, nivel, timp, cine stă acolo
 - `src/components/Ulita.tsx` – lobby-ul: alegi unde te așezi
 - `src/components/Masa.tsx` – partida: scoarța, scaunele cu inel de timp, cărțile cu cuvinte, intrarea
-- `public/dict/` – dicționarul jucabil pe prefixe (generat cu `npm run imparte -- lista.tsv public/dict`)
+- `public/dict/` – dicționarul jucabil: fișiere pe primele 2 litere fără diacritice + `index-v2.json` cu prefixele și terminațiile exacte, cu diacritice (generat cu `npm run imparte -- lista.tsv public/dict`, sau doar indexul cu `node scripts/reindexeaza.mjs`)
 
 ## Offline
 Aplicația intră în precache (~400 KB). Dicționarul nu: fiecare fișier de prefix se salvează
@@ -27,7 +27,12 @@ de start le descarcă pe toate (~3 MB transfer). Când regenerezi dicționarul, 
 
 ## Cum se joacă
 Jucătorul scrie doar continuarea după literele cerute (arătate în câmp), dar e acceptat și
-cuvântul întreg. Diacriticele sunt opționale.
+cuvântul întreg.
+
+Regulile respectă alfabetul românesc: ă, â, î, ș, ț sunt litere separate. După „casă” se cere
+„să” („sare” și „șarpe” sunt respinse), după „rață” se cere „ță”. Diacriticele se pot omite la
+tastare: „samanta” e recunoscut ca „sămânță”, dar o diacritică tastată se respectă. Terminațiile
+fără continuare exactă închid jocul (ex. „lucrăm” → „ăm”).
 
 ## Recompense (`src/recompense.ts`)
 - **Nuci** (moneda jocului, nu se pierd niciodată): 1 pe cuvânt, +1..3 pentru cuvinte lungi (9+ litere),

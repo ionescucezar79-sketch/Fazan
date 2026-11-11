@@ -1,5 +1,7 @@
 #!/usr/bin/env node
 // Imparte lista de cuvinte in fisiere per prefix (primele 2 litere, fara diacritice).
+// Indexul (index-v2.json) numara insa prefixele si terminatiile EXACTE, cu diacritice,
+// pentru ca regulile respecta alfabetul romanesc (a ≠ ă ≠ â, i ≠ î, s ≠ ș, t ≠ ț).
 // Utilizare: node scripts/imparte-lista.mjs <lista.tsv|lista.txt[.gz]> [director_iesire]
 // Intrare: un cuvant pe linie, optional "cuvant<TAB>frecventa".
 import fs from 'node:fs';
@@ -22,7 +24,8 @@ if (intrare.endsWith('.gz')) stream = stream.pipe(zlib.createGunzip());
 const rl = readline.createInterface({ input: stream, crlfDelay: Infinity });
 
 const grupe = new Map(); // prefix -> [[cuvant, frecventa]]
-const terminatii = new Map(); // terminatie -> cate cuvinte se termina asa
+const terminatii = new Map(); // terminatie exacta -> cate cuvinte se termina asa
+const continuari = {}; // prefix exact -> cate cuvinte incep asa
 let total = 0;
 
 for await (const linie of rl) {
@@ -33,26 +36,25 @@ for await (const linie of rl) {
   const p = n.slice(0, 2);
   if (!grupe.has(p)) grupe.set(p, []);
   grupe.get(p).push([cuvant, Number(fr) || 0]);
-  const t = n.slice(-2);
+  continuari[cuvant.slice(0, 2)] = (continuari[cuvant.slice(0, 2)] || 0) + 1;
+  const t = cuvant.slice(-2);
   terminatii.set(t, (terminatii.get(t) || 0) + 1);
   total++;
 }
 
 fs.mkdirSync(iesire, { recursive: true });
-const continuari = {};
 for (const [p, lista] of grupe) {
   // descrescator dupa frecventa: botul "usor" alege din capul listei
   lista.sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0], 'ro'));
   fs.writeFileSync(path.join(iesire, `${p}.json`), JSON.stringify(lista.map((x) => x[0])));
-  continuari[p] = lista.length;
 }
 
 const inchid = [...terminatii.keys()].filter((t) => !continuari[t]).sort();
 const index = {
   versiune: new Date().toISOString().slice(0, 10),
   total,
-  continuari, // prefix -> cate cuvinte incep asa
+  continuari, // prefix exact (cu diacritice) -> cate cuvinte incep asa
   inchid, // terminatii fara nicio continuare
 };
-fs.writeFileSync(path.join(iesire, 'index.json'), JSON.stringify(index));
+fs.writeFileSync(path.join(iesire, 'index-v2.json'), JSON.stringify(index));
 console.log(`${total} cuvinte, ${grupe.size} fisiere de prefix, ${inchid.length} terminatii care inchid -> ${iesire}`);

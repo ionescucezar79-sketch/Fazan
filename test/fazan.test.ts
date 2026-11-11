@@ -10,10 +10,12 @@ import {
   type StareJoc,
 } from '../src/engine';
 
-// Mini-dictionar, ordonat "dupa frecventa". Terminatii care inchid: -mp (anotimp), -ld (cald).
+// Mini-dictionar, ordonat "dupa frecventa". Terminatii care inchid: -mp (anotimp), -ld (cald), -al (țambal).
+// Fiecare terminatie cu diacritice are continuare: ră, să, ță, tă, că, ța.
 const dict = new DictionarInMemorie([
   'fazan', 'fată', 'fața', 'anotimp', 'ancoră', 'rață', 'tată', 'ursă',
   'șarpe', 'pepene', 'nemțoaică', 'cald', 'casă',
+  'răzeșan', 'sătean', 'țăran', 'tărtăcuță', 'căpitan', 'țambal',
 ]);
 
 const T0 = 1_000_000;
@@ -27,12 +29,66 @@ function joaca(s: StareJoc, id: string, cuvant: string, acum = T0) {
 
 describe('dictionar', () => {
   it('detecteaza terminatiile care inchid', () => {
-    expect(dict.inchideri()).toEqual(['ld', 'mp']);
+    expect(dict.inchideri()).toEqual(['al', 'ld', 'mp']);
   });
   it('accepta cuvinte tastate fara diacritice sau cu sedila', () => {
     expect(dict.potriviri('sarpe')).toEqual(['șarpe']);
     expect(dict.potriviri('şarpe')).toEqual(['șarpe']);
-    expect(dict.potriviri('fața')).toEqual(['fața', 'fată']); // forma exacta prima
+    expect(dict.potriviri('fata')).toEqual(['fată', 'fața']); // fara diacritice: toate variantele
+    expect(dict.potriviri('fața')).toEqual(['fața']); // diacritica tastata se respecta
+    expect(dict.potriviri('fătă')).toEqual([]);
+  });
+});
+
+describe('alfabetul romanesc: diacriticele conteaza in reguli', () => {
+  // casă -> „să”; rață -> „ță”; fată -> „tă”; tată -> „tă”
+  const d = new DictionarInMemorie([
+    'casă', 'sare', 'sămânță', 'șarpe', 'țară', 'tată', 'tăcere', 'rață', 'fată', 'român', 'lucrăm', 'amar', 'pește',
+    'țăran', 'răsărit',
+  ]);
+  const start = () => startJoc([{ id: 'ana', nume: 'Ana' }, { id: 'bob', nume: 'Bob' }], T0);
+  const muta = (s: StareJoc, id: string, c: string) => aplicaMutare(s, id, c, d, T0);
+  const dupa = (cuv: string) => {
+    const r = muta(start(), 'ana', cuv);
+    if (!r.ok) throw new Error(r.eroare);
+    return r.stare;
+  };
+
+  it('terminatia se pastreaza cu diacritice', () => {
+    expect(dupa('casă').terminatie).toBe('să');
+    expect(dupa('rață').terminatie).toBe('ță');
+  });
+
+  it('dupa „casă” se cere „să”, nu „sa” sau „șa”', () => {
+    const s = dupa('casă');
+    const err = (c: string) => {
+      const r = muta(s, 'bob', c);
+      return r.ok ? (r.eveniment.tip === 'cuvant_acceptat' ? r.eveniment.cuvant : 'ok') : r.eroare;
+    };
+    expect(err('sare')).toBe('prefix_gresit');
+    expect(err('șarpe')).toBe('prefix_gresit');
+    expect(err('sarpe')).toBe('prefix_gresit');
+    expect(err('sămânță')).toBe('sămânță');
+    expect(err('samanta')).toBe('sămânță'); // tastat fara diacritice, recunoscut corect
+  });
+
+  it('dupa „rață” se cere „ță”: „tată” si „tăcere” sunt respinse', () => {
+    const s = dupa('rață');
+    expect(muta(s, 'bob', 'tată').ok).toBe(false);
+    expect(muta(s, 'bob', 'tacere').ok).toBe(false);
+    expect(muta(s, 'bob', 'țară').ok).toBe(false); // „ța” nu e „ță”
+    const r = muta(s, 'bob', 'taran'); // fara diacritice -> „țăran”
+    expect(r.ok && r.stare.folosite.at(-1)).toBe('țăran');
+  });
+
+  it('o terminatie cu diacritic fara continuare inchide („lucrăm” -> „ăm”), chiar daca exista „am...”', () => {
+    expect(d.continuari('ăm')).toBe(0);
+    expect(d.continuari('am')).toBe(1);
+    const s = dupa('fată'); // -> „tă”
+    const r = muta(s, 'bob', 'tăcere'); // -> „re”
+    expect(r.ok).toBe(true);
+    expect(d.inchideri()).toContain('ăm');
+    expect(d.inchideri()).toContain('ân');
   });
 });
 
@@ -56,10 +112,10 @@ describe('mutari', () => {
     expect(err('bob', 'an-3')).toBe('caractere_invalide');
     expect(err('ana', 'ancoră')).toBe('nu_e_randul');
 
-    let t = joaca(s, 'bob', 'ancoră');
-    t = joaca(t, 'ana', 'rață');
-    t = joaca(t, 'bob', 'tată'); // -> "ta"
-    expect(err('ana', 'tată', t)).toBe('deja_folosit');
+    let t = joaca(s, 'bob', 'ancoră'); // -> „ră”
+    expect(err('ana', 'rață', t)).toBe('prefix_gresit'); // „ra” nu e „ră”
+    t = joaca(t, 'ana', 'răzeșan'); // -> „an”
+    expect(err('bob', 'ancoră', t)).toBe('deja_folosit');
   });
 
   it('o mutare respinsa nu modifica starea', () => {

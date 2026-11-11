@@ -370,7 +370,7 @@ export const useJoc = create<StareStore>()(
 
           // Jucatorul scrie doar continuarea dupa literele cerute; acceptam si cuvantul intreg.
           const variante = joc.terminatie
-            ? [joc.terminatie + bucata, ...(normalizeaza(bucata).startsWith(joc.terminatie) ? [bucata] : [])]
+            ? [joc.terminatie + bucata, ...(normalizeaza(bucata).startsWith(normalizeaza(joc.terminatie)) ? [bucata] : [])]
             : [bucata];
 
           set({ seVerifica: true });
